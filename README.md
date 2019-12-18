@@ -127,5 +127,15 @@
   15.对响应进行解码（例如 gzip 压缩）
   16.根据资源类型决定如何处理（假设资源为 HTML 文档）
   17.解析 HTML 文档，构建 DOM 树，下载资源，构造 CSSOM 树，执行 js 脚本，这些操作没有严格的先后顺序，以下分别解释
+  18.构架 DOM 树：
+    a.Tokenizing：根据 HTML 规范将字符流解析为标记
+    b.Lexing：词法分析将标记转换为对象并定义属性和规则
+    c.DOM construction：根据 HTML 标记关系将对象组成 DOM 树
+  19.解析过程中遇到图片、样式表、js 文件，启动下载
+  20.构建 CSSOM 树：
+    a.Tokenizing：字符流转换为标记流
+    b.Node：根据标记创建节点
+    c.CSSOM：节点创建 CSSOM 树
+  21.
   
 
