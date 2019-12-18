@@ -44,3 +44,11 @@
   4.在 HTML 4.01 中 <!doctype> 声明指向一个 DTD，由于 HTML 4.01 基于 SGML，所以 DTD 指定了标记规则以保证浏览器正确渲染内容
   5.HTML5 不基于 SGML，所以不用指定 DITD
   
+  常见 doctype
+    1. HTML4.01 strict：不允许使用表现性、废弃元素（如 font）以及 frameset。声明：<!DOCTPYE HTML PUBLIC"-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+    2.HTML4.01 Transitional：允许使用表现性、废弃元素（如 font），不允许使用 frameset。声明：<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd" >
+    3.HTML4.01 Frameset：允许表现性元素，废弃元素以及 frameset。声明：<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd" >
+    4.XHTML1.0 Strict：不允许使用表现性、废弃元素以及 frameset。文档必须是结构良好的 XML 文档。声明 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+    5.XHTML1.0 Transitional：允许使用表现性、废弃元素，不允许 frameset，文档必须是结构良好的 XML 文档。声明：<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+    6.XHTML1.0 Frameset：允许使用表现性、废弃元素以及 frameset，文档必须是结构良好的 XML 文档。声明：<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" >
+    7.HTML5: <!doctype html >
