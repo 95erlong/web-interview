@@ -52,3 +52,80 @@
     5.XHTML1.0 Transitional：允许使用表现性、废弃元素，不允许 frameset，文档必须是结构良好的 XML 文档。声明：<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
     6.XHTML1.0 Frameset：允许使用表现性、废弃元素以及 frameset，文档必须是结构良好的 XML 文档。声明：<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" >
     7.HTML5: <!doctype html >
+    
+
+### HTML 全局属性有哪些
+  1.accesskey：设置快捷键，提供快速访问元素如 aaa 在 windows 下的 firefox 中按 alt + shift + a 可激活元素
+  2.class：为元素设置类标识，多个类名用空格分开，CSS 和 Javascript 可通过 class 属性获取元素
+  3.contenteditable：指定元素内容是否可编辑
+  4.contextmenu：自定义鼠标右键弹出菜单内容
+  5.data-*：为元素增加自定义属性
+  6.dir：设置元素文本方向
+  7.draggable：设置元素是否可拖拽
+  8.dropzone：设置元素拖放类型：copy、move、link
+  9.hidden：表示一个元素是否与文档。样式上会导致元素不显示，但是不能用这个属性实现样式效果
+  10.id：元素 ID，文档内唯一
+  11.lang：元素内容的语言
+  12:spellcheck：是否启动拼写和语法检查
+  13.style：行内 css 样式
+  14.tabindex：设置元素可以获得焦点，通过 tab 可以导航
+  15:title：元素相关的建议信息
+  16:translate：元素和子孙节点内容是否需要本地化
+
+
+### 什么是 web 语义化，有什么好处
+  web 语义化是指通过 HTML 标记表示页面包含的信息，包含了 HTML 标签的语义化和 css 命名的语义化。HTML 标签的语义化是指：通过使用包含语义的标签（如 h1-h6），恰当地表示文档结构 css 命名的语义化是指：为 html 标签添加有意义的 class，id 补充未表达的语义，
+  为什么需要语义化：
+  1.去掉样式后页面呈现清晰的结构
+  2.盲人使用读屏器更好地阅读
+  3.搜素引擎更好的理解页面，有利于收录
+  4.方便团队项目的可持续运作及维护
+  
+### HTTP method
+  1.一台服务器要与 HTTP1.1 兼容，只要为资源实现 GET 和 HEAD 方法即可
+  2.GET 是最常用的方法，通常用于请求服务器发送某个资源
+  3.HEAD 与 GET 类似，但服务器在相应中只返回首部，不返回实体的主体部分
+  4.PUT 让服务器用请求的主体部分来创建一个由所请求的 URL 命名的新文档，或者，如果那个 URL 已经存在的话，就用这个主体替代它
+  5.POST 起初是用来向服务器输入数据的。实际上，通常会用它来支持 HTML 的表单。表单中填好的数据通常会被送给服务器，然后由服务器将其发送到要去的地方
+  6.TRACE 会在目的服务器端发起一个环回诊断，最后一站的服务器会弹回一个 TRACE 响应并在响应主体中携带它收到的原始请求报文。TRACE 方法主要用于诊断，用于验证请求是否如愿穿过了请求/响应链
+  7.OPTIONS 方法请求 web 服务器告知其支持的各种功能。可以查询服务器支持哪些方法或者对某些特殊资源支持哪些方法。
+  8.DELETE 请求服务器删除请求 UTL 指定的资源
+
+### 从浏览器地址栏输入 URL 到显示页面的步骤（以 HTTP 为例）
+  1.在浏览器地址栏输入 URL 
+  2.浏览器查看缓存，如果请求资源在缓存中并且新鲜，跳转到转码步骤
+    a.如果资源未缓存，发起新请求
+    b.如果已缓存，检验是否足够新鲜，足够新鲜直接提供给客户端，否则与服务器进行验证。
+    c.检验新鲜通常有两个 HTTP 头进行控制 Expires 和 Cache-Control：
+      ·HTTP1.0 提供 Expires，值为一个绝对时间表示缓存新鲜日期
+      ·HTTP1.1 增加了 Cache-Control:max-age=,值为以秒为单位的最大新鲜时间
+  3.浏览器解析 URL 获取协议，主机，端口，path
+  4.浏览器组装一个 HTTP（GET）请求报文
+  5.浏览器获取主机 ip 地址，过程如下：
+    a.浏览器缓存
+    b.本机缓存
+    c.hosts 文件
+    d.路由器缓存
+    e.ISP DNS 缓存
+    f.DNS 递归查询（可能存在负载均衡导致每次 IP 不一样）
+  6.打开一个 socket 与目标 IP 地址，端口建立 TCP 链接，三次握手如下：
+    a.客户端发送一个 TCP 的 SYN=1，Seq=X 的包到服务器端口
+    b.服务器发回 SYN=1，ACK=X+1，Seq=Y 的响应包
+    c.客户端发送 ACK=Y+1，Seq=Z
+  7.TCP链接建立后发送 HTTP 请求
+  8.服务器接受请求并解析，将请求转发到服务程序，如虚拟主机使用 HTTP Host 头部判断请求的服务程序
+  9.服务器检查 HTTP 请求头是否包含缓存验证信息，如果验证缓存新鲜，返回 304 等对应状态码
+  10.处理程序读取完整请求并准备 HTTP 响应，可能需要查询数据库等操作
+  11.服务器将响应报文通过 TCP 连接发送回浏览器
+  12.浏览器接受 HTTP 响应，然后根据情况选择关闭 TCP 连接或者保留重用，关闭 TCP 连接的 四次握手如下：
+    a.主动方发送 Fin=1，Ack=Z，Seq=X 报文
+    b.被动方发送 ACK=X+1，Seq=Z 报文
+    c.被动方发送 Fin=1，ACK=X，Seq=Y 报文
+    d.主动方发送 ACK=Y，Seq=X 报文
+  13.浏览器检查响应状态码：是否为 1XX，3XX，4XX，5XX，这些情况处理与 2XX 不同
+  14.如果资源可缓存，进行缓存
+  15.对响应进行解码（例如 gzip 压缩）
+  16.根据资源类型决定如何处理（假设资源为 HTML 文档）
+  17.解析 HTML 文档，构建 DOM 树，下载资源，构造 CSSOM 树，执行 js 脚本，这些操作没有严格的先后顺序，以下分别解释
+  
+
