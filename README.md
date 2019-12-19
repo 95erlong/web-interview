@@ -136,6 +136,21 @@
     a.Tokenizing：字符流转换为标记流
     b.Node：根据标记创建节点
     c.CSSOM：节点创建 CSSOM 树
-  21.
+  21.根据 DOM 树和 CSSOM 树构建渲染树：
+    a.从 DOM 树的根节点遍历所有可见节点，不可见节点包括：
+      ·script，meta 这样本身不可见的标签
+      ·被 css 隐藏的节点，如 display：none
+    b.对每一个可见节点，找到恰当的 CSSOM 规则并应用
+    c.发布可视节点的内容和计算样式
+  22.js 解析如下：
+    a.浏览器创建 Document 对象并解析 HTML，将解析到的元素和文本节点添加到文档中，此时 document.readystate 为 loading
+    b.HTML 解析器遇到没有 async 和 defer 的 script 时，将他们添加到文档中，然后执行行内或外部脚本。这些脚本会同步执行，并且在脚本下载和执行时解析器会暂停。这样就可以用 document.write() 把文本插入到输入流中。同步脚本经常简单定义函数和注册事件处理程序，他们可以遍历和操作 script 和他们之前的文档内容。
+    c.当解析器遇到设置了 async 属性的 script 时，开始下载脚本并继续解析文档。脚本会在它下载完成后尽快执行，但是解析器不会停下来等它下载。异步脚本禁止使用 document.write()，它们可以访问自己 script 和之前的文档元素
+    d.当文档完成解析，document.readState 变成 interactive
+    e.所有 defer 脚本会按照在文档出现的顺序执行，延迟脚本能访问完整文档树，禁止使用 document.write()
+    f.浏览器在 Document 对象上触发 DOMContentLoaded 事件
+    g.此时文档完全解析完成，浏览器可能还在等待如图片等内容加载，等这些内容完成载入并且所有异步脚本完成载入和执行，document.readState 变为 complete，window 触发 load 事件
+  23.显示页面 (HTML 解析过程中会逐步显示页面)
+  
   
 
