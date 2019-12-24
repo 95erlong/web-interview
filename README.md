@@ -152,5 +152,87 @@
     g.此时文档完全解析完成，浏览器可能还在等待如图片等内容加载，等这些内容完成载入并且所有异步脚本完成载入和执行，document.readState 变为 complete，window 触发 load 事件
   23.显示页面 (HTML 解析过程中会逐步显示页面)
   
+### HTTP request 报文结构是怎样的
+  1.首行是 Request-Line 包括：请求方法，请求 URL，协议版本，CRLF
+  2.首行之后是若干行请求头，包括 general-header，request-header 或者 entity-header，每行以 CRLF 结束
+  3.请求头和消息实体之间有一个 CRLF 分隔
+  4.根据实际请求需要可能包含一个消息实体 一个请求报文 例子如下：
+  
+  ```
+  GET /Protocols/rfc2616/rfc2616-sec5.html HTTP/1.1
+  Host: www.w3.org
+  Connection: keep-alive
+  Cache-Control: max-age=0
+  Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+  User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36
+  Referer: https://www.google.com.hk/
+  Accept-Encoding: gzip,deflate,sdch
+  Accept-Language: zh-CN,zh;q=0.8,en;q=0.6
+  Cookie: authorstyle=yes
+  If-None-Match: "2cc8-3e3073913b100"
+  If-Modified-Since: Wed, 01 Sep 2004 13:24:52 GMT
+
+  name=qiu&age=25
+  ```
+  
+### HTTP response 报文结构是怎样的
+  1.首行是状态行包括：HTTP 版本，状态码，状态描述，后面跟一个 CRLF
+  2.首行之后是若干行响应头，包括：通用头部，响应头部，实体头部
+  3.响应头部和响应实体之间用一个 CRLF 空行分隔
+  4.最后是一个可能的消息实体 响应报文 例子如下：
+  ```
+  HTTP/1.1 200 OK
+  Date: Tue, 08 Jul 2014 05:28:43 GMT
+  Server: Apache/2
+  Last-Modified: Wed, 01 Sep 2004 13:24:52 GMT
+  ETag: "40d7-3e3073913b100"
+  Accept-Ranges: bytes
+  Content-Length: 16599
+  Cache-Control: max-age=21600
+  Expires: Tue, 08 Jul 2014 11:28:43 GMT
+  P3P: policyref="http://www.w3.org/2001/05/P3P/p3p.xml"
+  Content-Type: text/html; charset=iso-8859-1
+
+  {"name": "qiu", "age": 25}
+  ```
+  
+### 如何进行网站性能优化
+  ·content 方面
+    ·减少 HTTP 请求：合并文件、CSS 精灵、inline Image
+    ·减少 DNS 查：DNS 查询完成之前浏览器不能从这个主机下载任何文件。方法：DNS 缓存、将资源分布到恰当数量的主机名，平衡并行下载和 DNS 查询
+    ·避免重定向：多余的中间访问
+    ·使 Ajax 可缓存
+    ·非必须组件延迟加载
+    ·未来所需组件预加载
+    ·减少 DOM 元素数量
+    ·将资源放到不同的域下：浏览器同时从一个域下载资源的数目有限，增加域可以提高并行下载量
+    ·减少 iframe 数量
+    ·不要 404
+   ·Server 方面
+    ·使用 CDN 
+    ·添加 Expires 或者 Cache-Control 响应头
+    ·对组件使用 Gzip 压缩
+    ·配置 ETag (Etag 是 URL 的 Entity Tag，用于标记 URL 对象是否改变，区分不同语言和 Session 等等。具体内部含义是使服务器控制的，就像 Cookie 那样)
+    ·Flush Buffer Early (提前刷新缓冲区)
+    ·Ajax 使用 GET 进行请求
+    ·避免空 src 的 img 标签
+  ·Cookie 方面
+    ·将样式表放到页面顶部
+    ·不使用 CSS 表达式
+    ·不使用 @import
+    ·不使用 IE 的 filter
+   ·Javascript 方面
+    ·将脚本放到页面底部
+    ·将 Javascript 和 css 从外部引入
+    ·压缩 Javascript 和 css
+    ·删除不需要的脚本
+    ·减少 DOM 访问
+    ·合理设计事件监听
+  ·图片方面
+    ·优化图片：根据实际颜色需要选择色深、压缩
+    ·优化 css 精灵
+    ·不要在 HTML 中拉伸图片
+    
+    
   
 
