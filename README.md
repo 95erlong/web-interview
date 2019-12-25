@@ -488,7 +488,18 @@
     ·padding-bottom、padding-left、padding-right、padding-top
     ·text-indent (首行缩进)
 
-### link 
+### link 与 @import 的区别
+  1.link 是 HTML 方式，@import 是 CSS 方式
+  2.link 最大限度支持并行下载，@import 过多嵌套导致串行下载，出现 FOUC (浏览器样式闪烁或者叫做无样式内存闪烁，由于 CSS 引入使用了 @import 或者存在多个 style 标签以及 CSS 文件在页面底部引入使得 CSS 文件加载在 html 之后导致页面闪烁、花屏；用 link 加载 CSS 文件，放在 head 标签里面 )
+  3.link 可以通过 rel="alternate stylesheet" 指定候选样式
+  4.浏览器对 link 支持早于 @import，可以使用 @import 对老浏览器隐藏样式
+  5.@import 必须在样式规则之前，可以在 CSS 文件中引用其他文件
+  6.总体来说：link 优于 @import，如下
+    ·link 属于 HTML 标签，而 @import 是 CSS 提供的一种方式
+    ·@import 有次数限制，只能引入 31 次
+    ·当页面被加载时，link 引用的 CSS 会同时被加载，而 @import 引用的 CSS 则是等待主页面全部被加载完后才会被加载，所以当网速较慢时，可能会只出现页面而没有样式，等一段时间后样式才会被加载出来
+    ·@import 只能在 IE5 以上才能使用，否则不识别，而 link 则没有这个问题
+    ·当使用 Javascript 控制 DOM(document.styleSheets)去改变样式时，只能使用 link，DOM 不能控制 @import
   
 
 
