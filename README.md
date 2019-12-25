@@ -363,8 +363,132 @@
   
   ·选择器 hack：不同浏览器对选择器的支持不一样
   ```
-    * 
+    /* IE6 and below */
+    * html #uno {
+      color: red;
+    }
+    
+    /* IE7 */
+    *:first-child + html #dos {
+      color: red;
+    }
+    
+    /* IE7, FF, Saf, Opera  */
+    html > body #tres {
+      color: red;
+    }
+
+    /* IE8, FF, Saf, Opera (Everything but IE 6,7) */
+    html>/**/body #cuatro {
+      color: red;
+    }
+
+    /* Opera 9.27 and below, safari 2 */
+    html:first-child #cinco {
+      color: red;
+    }
+
+    /* Safari 2-3 */
+    html[xmlns*=''] body:last-child #seis {
+      color: red;
+    }
+
+    /* safari 3+, chrome 1+, opera9+, ff 3.5+ */
+    body:nth-of-type(1) #siete {
+      color: red;
+    }
+
+    /* safari 3+, chrome 1+, opera9+, ff 3.5+ */
+    body:first-of-type #ocho {
+      color: red;
+    }
+
+    /* saf3+, chrome1+ */
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      #diez {
+        color: red;
+      }
+    }
+
+    /* iPhone / mobile webkit */
+    @media screen and (max-device-width: 480px) {
+      #veintiseis {
+        color: red;
+      }
+    }
+
+    /* Safari 2 - 3.1 */
+    html[xmlns*='']:root #trece {
+      color: red;
+    }
+
+    /* Safari 2 - 3.1, Opera 9.25 */
+    *|html[xmlns*=''] #catorce {
+      color: red;
+    }
+
+    /* Everything but IE6-8 */
+    :root * > #quince {
+      color: red;
+    }
+
+    /* IE7 */
+    * + html #dieciocho {
+      color: red;
+    }
+
+    /* Firefox only. 1+ */
+    #veinticuatro,
+    x:-moz-any-link {
+      color: red;
+    }
+
+    /* Firefox 3.0+ */
+    #veinticinco,
+    x:-moz-any-link,
+    x:default {
+      color: red;
+    }
+
+  ```
+  
+  ·属性 hack：不同浏览器解析 bug 或方法
+  ```
+  /* IE6 */
+  #once { _color: blue }
+
+  /* IE6, IE7 */
+  #doce { *color: blue; /* or #color: blue */ }
+
+  /* Everything but IE6 */
+  #diecisiete { color/**/: blue }
+
+  /* IE6, IE7, IE8 */
+  #diecinueve { color: blue\9; }
+
+  /* IE7, IE8 */
+  #veinte { color/*\**/: blue\9; }
+
+  /* IE6, IE7 -- acts as an !important */
+  #veintesiete { color: blue !ie; } /* string after ! can be anything */
   ```
 
+### specified value, computed value, used value 计算方法
+  ·specified value：计算方法如下：
+    1.如果样式表设置了一个值，使用这个值
+    2.如果没有设值，且这个属性是继承属性，从父元素继承
+    3.如果没有设值，并且不是继承属性，则使用 css 规范指定的初始值
+  ·computed value：以 spebified value 根据规范定义的行为进行计算，通常将相对值计算为绝对值，例如 em 根据 font-size 进行计算。一些使用百分比数并且需要布局来决定最终值的属性，如 width，margin。百分数就直接作为 computed value。line-height 的无单位值也直接作为 computed value。这些值将在计算 used value 时得到绝对值。computed value 的主要作用是用于继承。
+  ·used value：属性计算后的最终值，对于大多数属性可以通过 window.getComputedStyle 获得，尺寸值单位为像素。以下属性依赖于布局。
+    ·background-position
+    ·bottom,left,right,top
+    ·height、width
+    ·margin-bottom、margin-left、margin-right、margin-top
+    ·min-height、min-width
+    ·padding-bottom、padding-left、padding-right、padding-top
+    ·text-indent (首行缩进)
+
+### link 
+  
 
 
