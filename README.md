@@ -322,5 +322,9 @@
   20.:not(selector):选择不符合 selector 的元素。不参与计算优先级，兼容性：IE9+
   21.::first-letter:伪元素，选择块元素第一行的第一个字母，兼容性 IE5.5+
   22.::first-line:伪元素，选择块元素的第一行，兼容性 IE5.5+
-  23.:nth-child(an+b):
-
+  23.:nth-child(an+b):伪类，选择前面有 an+b-1 个兄弟节点的元素，其中 n >= 0，兼容性 IE9+
+  24.:nth-last-child(an+b):伪类，选择后面 an+b-1 个兄弟节点的元素 其中 n >= 0，兼容性 IE9+
+  25.X：nth-of-type(an+b):伪类，X 为选择器，解析得到元素标签，选择前面有 an+b-1 个相同标签兄弟节点的元素。兼容性 IE9+
+  26.X:nth-last-of-type(an+b):伪类，X 为选择器，解析得到元素标签，选择后面有 an+b-1 个相同标签兄弟节点的元素。兼容性 IE9+
+  27.X:first-child: 伪类，选择满足 X 选择器的元素，且这个元素是其父节点的第一个子元素，兼容性 IE7+
+  28.X:last-child:
