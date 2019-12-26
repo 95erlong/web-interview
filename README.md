@@ -717,7 +717,25 @@
   3.否则，如果 float 不是 none，框是浮动的，display 根据下表进行调整
   4.否则，如果元素是根元素，display 根据下表进行调整
   5.其他情况下 display 的值为指定值 总结起来：绝对定位、浮动、根元素都需要调整 display
+  
   [图片](https://github.com/qiu-deqing/FE-interview/blob/master/img/display-adjust.png)
+  
+### 外边距折叠 (collapsing margins)
+  毗邻的两个或多个 margin 会合并成一个 margin，叫做外边距折叠。规则如下：
+    1.两个或多个毗邻的普通流中的块元素垂直方向上的 margin 会折叠
+    2.浮动元素 /inline-block 元素/绝对定位元素的 margin 不会和垂直方向上的其他元素的 margin 折叠
+    3.创建了块级格式化上下文的元素，不会和它的子元素发生 margin 折叠
+    4.元素自身的 margin-bottom 和 margin-top 相邻时也会折叠
+    
+### 如何确定一个元素的包含块(containing block)  
+  1.根元素的包含块叫做初始化包含块，在连续媒体中他的尺寸与 viewport 相同并且 anchored at the canvas origin；对于 paged media，它的尺寸等于 page area。初始包含块的 direction 属性与根元素相同。
+  2.position 为 relative 或者 static 的元素，它的包含块由最近的块级(display 为 block，list-item，table)祖先元素的内容框组成
+  3.如果元素 position 为 fixed。对于连续媒体，它的包含块为 viewport；对于 paged media，包含块为 page area
+  4.如果元素 position 为 absolute，它的包含块由祖先元素中最近一个 position 为 relative，absolute 或者 fixed 的元素产生，规则如下：
+    ·如果祖先元素为行内元素，the containing block is the bounding box around the padding boxes of the first and the last inline boxes generated for that element。
+    ·其他情况下包含块由祖先节点的 padding edge 组成
+  如果找不到定位的祖先元素，包含块为初始包含块
+  
   
   
   
