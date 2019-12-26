@@ -525,17 +525,199 @@
   ·无损压缩：压缩算法对图片的所有的数据进行编码压缩，能在保证图片的质量的同时降低图片的尺寸。png 是其中的代表
   ·有损压缩：压缩算法不会对图片所有的数据进行编码压缩，而是在压缩的时候，去除了人眼无法识别的图片细节。因此有损压缩可以在同等图片质量的情况下大幅降低图片的尺寸。其中代表是 jpg
   
+  webP: webP 图片是一种新的图像格式，由 Google 开发。与 png、jpg 相比，相同的视觉体验下，webP 图像的尺寸缩小了大约 30%。另外，webP 图像格式还支持有损压缩、无损压损、透明和动画。理论上完全可以替代 png、jpg、gif 等图片格式，当然目前 webP 的还没有得到全面的支持。
+    1.文件小，支持有损和无损压缩，支持动画、透明
+    2.浏览器兼容性不好
+  
   gif：采用 LZW 压缩算法进行编码，是一种无损的基于索引色的图片格式。由于采用了无损压缩，相比古老的 bmp 格式，尺寸较小，而且支持透明和动画。缺点是由于 gif 只存储 8 位索引(也就是最多能表达 2^8=256 种颜色)，色彩复杂、细节丰富的图片不适合保存为 gif 格式。色彩简单的 logo、icon、线框图适合采用 gif 格式。
-    特点：
-      1.8 位像素，256 色
-      2.无损压缩
-      3.支持简单动画
-      4.支持 boolean 透明
-      5.适合简单动画
+    1.8 位像素，256 色
+    2.无损压缩
+    3.支持简单动画
+    4.支持 boolean 透明
+    5.适合简单动画
 
   JPEG：
-    特点：
-      1.颜色限于 256
-      2.
-  
+    1.颜色限于 256
+    2.有损压缩
+    3.可控制压缩质量
+    4.不支持透明
+    5.适合照片
+      
+  PNG：
+    1.有 PNG8 和 truecolor PNG
+    2.无损压缩，支持透明，简单图片尺寸小
+    3.PNG8 类似 GIF 颜色上限为 256，文件小，支持 alpha 透明度，无动画
+    4.适合图标、背景、按钮
+    
+### CSS 有哪些继承属性
+  1.关于文字排版的属性如：
+    · font
+    · word-break
+    · letter-spacing
+    · text-align
+    · text-rendering
+    · word-spacing
+    · white-space
+    · text-indent
+    · text-transform
+    · text-shadow
+  2.line-height
+  3.color
+  4.visibilty
+  5.cursor
+    
+### IE6 浏览器有哪些常见的 bug，缺陷或者与标准不一致的地方，如何解决
+  ·IE6 不支持 min-height，解决办法使用 css hack：
+  ```
+    .target {
+        min-height: 100px;
+        height: auto !important;
+        height: 100px;   // IE6下内容高度超过会自动扩展高度
+    }
+  ```
+    
+  ·ol 内 li 的序号全为 1，不递增。解决方法：为 li 设置样式 display: list-item;
+  ·未定位父元素 overflow: auto，包含 position: relative 子元素，子元素高于父元素时会溢出。解决办法：
+    1.子元素去掉 position: relative
+    2.不能为子元素去掉定位时，父元素 position: relative
+    ```
+    <style type="text/css">
+    .outer {
+        width: 215px;
+        height: 100px;
+        border: 1px solid red;
+        overflow: auto;
+        position: relative;  /* 修复bug */
+    }
+    .inner {
+        width: 100px;
+        height: 200px;
+        background-color: purple;
+        position: relative;
+    }
+    </style>
 
+    <div class="outer">
+        <div class="inner"></div>
+    </div>
+    ```
+  ·IE6 只支持 a 标签的 :hover 伪类，解决方法：使用 js 为元素监听 mouseenter，mouseleave 事件，添加类实现效果：
+  ```
+  <style type="text/css">
+  .p:hover,
+  .hover {
+      background: purple;
+  }
+  </style>
+
+  <p class="p" id="target">aaaa bbbbb<span>DDDDDDDDDDDd</span> aaaa lkjlkjdf j</p>
+
+  <script type="text/javascript">
+  function addClass(elem, cls) {
+      if (elem.className) {
+          elem.className += ' ' + cls;
+      } else {
+          elem.className = cls;
+      }
+  }
+  function removeClass(elem, cls) {
+      var className = ' ' + elem.className + ' ';
+      var reg = new RegExp(' +' + cls + ' +', 'g');
+      elem.className = className.replace(reg, ' ').replace(/^ +| +$/, '');
+  }
+
+  var target = document.getElementById('target');
+  if (target.attachEvent) {
+      target.attachEvent('onmouseenter', function () {
+          addClass(target, 'hover');
+      });
+      target.attachEvent('onmouseleave', function () {
+          removeClass(target, 'hover');
+      })
+  }
+  </script>
+  ```
+  
+  ·IE5-8 不支持 opacity，解决方法：
+  ```
+  .opacity {
+      opacity: 0.4
+      filter: alpha(opacity=60); /* for IE5-7 */
+      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"; /* for IE 8*/
+  }
+  ```
+  
+  ·IE6 在设置 height 小于 font-size 时高度值为 font-size，解决办法：font-size：0；
+  ·IE6 不支持 PNG 透明背景，解决办法 IE6 下使用 gif 图片
+  ·IE6-7 不支持 display: inline-block 解决办法：设置 inline 并触发 hasLayout
+  ```
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+  ```
+  
+  ·IE6 下浮动元素在浮动方向上与父元素边界接触元素的外边距会加倍。解决办法：
+    1.使用 padding 控制间距
+    2.浮动元素 display: inline；这样解决问题且无任何副作用：CSS 标准规定浮动元素 display: inline 会自动调整为 block
+    
+  ·通过为块级元素设置宽度和左右 margin 为 auto 时，IE6 不能实现水平居中，解决方法：为父元素设置 text-align: center;
+  
+  
+### 容器包含若干浮动元素时如何清理(包含)浮动
+  1.容器元素闭合标签前添加额外元素并设置 clear: both
+  2.父元素触发块级格式化上下文(见块级可视化上下文部分)
+  3.设置容器元素伪元素进行清理
+  
+  ```
+  
+  /*
+  * 在标准浏览器下使用
+  * 1. content 内容为空格用于修复 opera 下文档中出现 contenteditable 属性时在清理浮动元素上下的空白
+  * 2.使用 display 使用 table 而不是 block；可以防止容器和子元素 top-margin 折叠，这样能使清理效果与 BFC，IE6/7 zoom：1 一致
+  */
+  
+  .clearfix:before,
+  .clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+  }
+  
+  .clearfix:after {
+    clear: both;
+  }
+  
+  /*
+  * IE 6/7 下使用
+  * 通过触发 hasLayout 实现包含浮动
+  */
+  .clearfix {
+    *zoom: 1;
+  }
+  ```
+  
+### 什么是 FOUC？如何避免
+  Flash Of Unstyled Content:用户定义样式表加载之前浏览器使用默认样式显示文档，用户样式加载渲染之后再重新显示文档，造成页面闪烁。解决方法：把样式表放到文档的 head
+  
+### 如何创建块级格式化上下文(block formatting context)，BFC 有什么用
+  创建规则：
+    1.根元素
+    2.浮动元素(float 不是 none)
+    3.绝对定位元素(position 取值为 absolute 或 fixed)
+    4.display 取值为 inline-block，table-cell，table-caption，flex，inline-flex 之一的元素
+    5.overflow 不是 visible 的元素
+    
+  作用：
+    1.可以包含浮动元素
+    2.不被浮动元素覆盖
+    3.阻止父子元素的 margin 折叠
+    
+### display、float、position 的关系
+  1.如果 display 为 none，那么 position 和 float 都不起作用，这种情况下元素不产生框
+  2.否则，如果 position 值为 absolute 或者 fixed，框就是绝对定位的，float 的计算值为 none，display 根据下面的标格进行调整。
+  3.否则，如果 float 不是 none，框是浮动的，display 根据下表进行调整
+  4.否则，如果元素是根元素，display 根据下表进行调整
+  5.其他情况下 display 的值为指定值 总结起来：绝对
+  5.其他情况下 display 的值为指定值 总结起来：绝对定位
+  
+  
+  
