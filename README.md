@@ -716,8 +716,8 @@
   2.否则，如果 position 值为 absolute 或者 fixed，框就是绝对定位的，float 的计算值为 none，display 根据下面的标格进行调整。
   3.否则，如果 float 不是 none，框是浮动的，display 根据下表进行调整
   4.否则，如果元素是根元素，display 根据下表进行调整
-  5.其他情况下 display 的值为指定值 总结起来：绝对
-  5.其他情况下 display 的值为指定值 总结起来：绝对定位
+  5.其他情况下 display 的值为指定值 总结起来：绝对定位、浮动、根元素都需要调整 display
+  [图片](https://github.com/qiu-deqing/FE-interview/blob/master/img/display-adjust.png)
   
   
   
