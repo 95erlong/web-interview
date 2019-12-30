@@ -738,7 +738,145 @@
 
 ### stacking context，布局规则
   z 轴上的默认层叠顺序如下（从下到上）：
-    1.
+    1.根元素的边界和背景
+    2.常规流中的元素按照 html 中顺序
+    3.浮动块
+    4.positioned 元素按照 html 中出现顺序
+  如何创建 stacking context：
+    1.根元素
+    2.z-index 不为 auto 的定位元素
+    3.a flex item with a z-index value other than 'auto'
+    4.opacity 小于 1 的元素
+    5.在移动端 webkit 和 chrome22+，z-index 为 auto，position：fixed 也将创建新的 stacking context
+    
+### 如何水平居中一个元素
+  1.如果需要居中的元素为常规流中 inline 元素，为父元素设置 text-align: center; 即可实现
+  2.如果需要居中的元素为常规流中 block 元素，1）为元素设置宽度，2）设置左右 margin 为 auto，3）IE6 下需要在父元素上设置 text-align：center，再给子元素恢复需要的值
+  
+  ```
+  <body>
+      <div class="content">
+      aaaaaa aaaaaa a a a a a a a a
+      </div>
+  </body>
+
+  <style>
+      body {
+          background: #DDD;
+          text-align: center; /* 3 */
+      }
+      .content {
+          width: 500px;      /* 1 */
+          text-align: left;  /* 3 */
+          margin: 0 auto;    /* 2 */
+
+          background: purple;
+      }
+  </style>
+  ```
+  
+  3.如果需要居中的元素为浮动元素，1）为元素设置宽度，2）position：relative；3）浮动方向偏移量（left 或者 right）设置为 50%，4）浮动方向上的margin 设置为元素宽度一半乘以 -1
+  
+  ```
+  <body>
+      <div class="content">
+      aaaaaa aaaaaa a a a a a a a a
+      </div>
+  </body>
+
+  <style>
+      body {
+          background: #DDD;
+      }
+      .content {
+          width: 500px;         /* 1 */
+          float: left;
+
+          position: relative;   /* 2 */
+          left: 50%;            /* 3 */
+          margin-left: -250px;  /* 4 */
+
+          background-color: purple;
+      }
+  </style>
+
+  ```
+  
+  4.如果需要居中的元素为绝对定位元素，1）为元素设置宽度，2）偏移量设置为 50%，3）偏移方向外边距设置为元素宽度一半乘以 -1
+  
+```
+<body>
+    <div class="content">
+    aaaaaa aaaaaa a a a a a a a a
+    </div>
+</body>
+
+<style>
+    body {
+        background: #DDD;
+        position: relative;
+    }
+    .content {
+        width: 800px;
+
+        position: absolute;
+        left: 50%;
+        margin-left: -400px;
+
+        background-color: purple;
+    }
+</style>
+
+```
+
+  5.如果需要居中的元素为绝对定位元素，1）为元素设置宽度，2）设置左右偏移量都为 0，3）设置左右外边距都为 auto
+  
+```
+<body>
+    <div class="content">
+    aaaaaa aaaaaa a a a a a a a a
+    </div>
+</body>
+
+<style>
+    body {
+        background: #DDD;
+        position: relative;
+    }
+    .content {
+        width: 800px;
+
+        position: absolute;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+
+        background-color: purple;
+    }
+</style>
+
+```
+
+### 如何竖直居中一个元素
+
+  ·需要居中元素为单行文本，为包含文本的元素设置大于 font-size 的 line-height
+```
+<p class="text">center text</p>
+
+<style>
+.text {
+    line-height: 200px;
+}
+</style>
+```
+
+## Javascript 概念部分
+
+### DOM 元素 e 的 e.getAttribute(propName) 和 e.propName 有什么区别和联系
+  ·e.getAttribute(), 是标准 DOM 操作文档元素属性的方法，具有通用性可在任意文档上使用，返回元素在源文件中设置的属性
+  ·e.propName 通常是在 HTML 文档中访问特定元素的特性，浏览器解析元素后生成对应对象(如 a 标签生成 HTMLAnchorElement)，这些对象的特性会根据特定规则结合属性设置得到，对于没有对应特性的属性，只能使用 getAttribute 进行访问。
+  ·e.getAttribute() 返回值
+  ·
   
   
   
