@@ -735,7 +735,10 @@
     ·如果祖先元素为行内元素，the containing block is the bounding box around the padding boxes of the first and the last inline boxes generated for that element。
     ·其他情况下包含块由祖先节点的 padding edge 组成
   如果找不到定位的祖先元素，包含块为初始包含块
-  
+
+### stacking context，布局规则
+  z 轴上的默认层叠顺序如下（从下到上）：
+    1.
   
   
   
