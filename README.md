@@ -1109,5 +1109,151 @@ HTML5 新增应用程序缓存，允许 web 应用将应用程序自身保存到
   2. 否则，如果对象有toString()并且返回原始值，javascript将返回结果转换为数字作为结果
   3. 否则，throws a TypeError
   
+### <,>,<=,>=的比较规则
+所有比较运算符都支持任意类型，但是比较只支持数字和字符串，所以需要执行必要的转换然后进行比较，转换规则如下:
+
+  1.如果操作数是对象，转换为原始值：如果 valueOf 方法返回原始值，则使用这个值，否则使用 toString 方法的结果，如果转换失败则报错
+  2.经过必要的对象到原始值的转换后，如果两个操作数都是字符串，按照字母顺序进行比较（他们的 16 位 unicode 值的大小）
+  3.否则，如果有一个操作数不是字符串，将两个操作数转换为数字进行比较
   
+###  +运算符工作流程
+  1.如果有操作数是对象，转换为原始值
+  2.此时如果有一个操作数是字符串，其他的操作数都转换为字符串并执行连接
+  3.否则：所有操作数都转换为数字并执行加法
   
+### 函数内部 arguments 变量有哪些特性,有哪些属性,如何将它转换为数组
+  1.arguments 所有函数中都包含的一个局部变量，是一个类数组对象，对应函数调用时的实参。如果函数定义同名参数会在调用时覆盖默认对象
+  2.arguments[index]分别对应函数调用时的实参，并且通过 arguments 修改实参时会同时修改实参
+  3.arguments.length 为实参的个数（Function.length 表示形参长度）
+  4.arguments.callee 为当前正在执行的函数本身，使用这个属性进行递归调用时需注意 this 的变化
+  5.arguments.caller 为调用当前函数的函数（已被遗弃）
+  6.转换为数组：var args = Array.prototype.slice.call(arguments, 0);  
+  
+### DOM 事件模型是如何的,编写一个 EventUtil 工具类实现事件管理兼容
+  1.DOM 事件包含捕获（capture）和冒泡（bubble）两个阶段：捕获阶段事件从 window 开始触发事件然后通过祖先节点一次传递到触发事件的 DOM 元素上；冒泡阶段事件从初始元素依次向祖先节点传递直到 window
+  2.标准事件监听 elem.addEventListener(type, handler, capture)/elem.removeEventListener(type, handler, capture)：handler 接收保存事件信息的 event 对象作为参数，event.target 为触发事件的对象，handler 调用上下文 this 为绑定监听器的对象，event.preventDefault()取消事件默认行为，event.stopPropagation()/event.stopImmediatePropagation()取消事件传递
+  3.老版本 IE 事件监听 elem.attachEvent('on'+type, handler)/elem.detachEvent('on'+type, handler)：handler 不接收 event 作为参数，事件信息保存在 window.event 中，触发事件的对象为 event.srcElement，handler 执行上下文 this 为 window 使用闭包中调用 handler.call(elem, event)可模仿标准模型，然后返回闭包，保证了监听器的移除。event.returnValue 为 false 时取消事件默认行为，event.cancleBubble 为 true 时取消时间传播
+  4.通常利用事件冒泡机制托管事件处理程序提高程序性能。  
+  
+```
+/**
+ * 跨浏览器事件处理工具。只支持冒泡。不支持捕获
+ * @author  (qiu_deqing@126.com)
+ */
+
+var EventUtil = {
+    getEvent: function (event) {
+        return event || window.event;
+    },
+    getTarget: function (event) {
+        return event.target || event.srcElement;
+    },
+    // 返回注册成功的监听器，IE中需要使用返回值来移除监听器
+    on: function (elem, type, handler) {
+        if (elem.addEventListener) {
+            elem.addEventListener(type, handler, false);
+            return handler;
+        } else if (elem.attachEvent) {
+            var wrapper = function () {
+              var event = window.event;
+              event.target = event.srcElement;
+              handler.call(elem, event);
+            };
+            elem.attachEvent('on' + type, wrapper);
+            return wrapper;
+        }
+    },
+    off: function (elem, type, handler) {
+        if (elem.removeEventListener) {
+            elem.removeEventListener(type, handler, false);
+        } else if (elem.detachEvent) {
+            elem.detachEvent('on' + type, handler);
+        }
+    },
+    preventDefault: function (event) {
+        if (event.preventDefault) {
+            event.preventDefault();
+        } else if ('returnValue' in event) {
+            event.returnValue = false;
+        }
+    },
+    stopPropagation: function (event) {
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        } else if ('cancelBubble' in event) {
+            event.cancelBubble = true;
+        }
+    },
+    /**
+     * keypress事件跨浏览器获取输入字符
+     * 某些浏览器在一些特殊键上也触发keypress，此时返回null
+     **/
+     getChar: function (event) {
+        if (event.which == null) {
+            return String.fromCharCode(event.keyCode);  // IE
+        }
+        else if (event.which != 0 && event.charCode != 0) {
+            return String.fromCharCode(event.which);    // the rest
+        }
+        else {
+            return null;    // special key
+        }
+     }
+};
+```
+
+
+### 评价一下三种方法实现继承的优缺点,并改进
+
+```
+
+function Shape() {}
+
+function Rect() {}
+
+// 方法1
+Rect.prototype = new Shape();
+
+// 方法2
+Rect.prototype = Shape.prototype;
+
+// 方法3
+Rect.prototype = Object.create(Shape.prototype);
+
+Rect.prototype.area = function () {
+  // do something
+};
+```
+
+方法 1：
+
+优点：正确设置原型链实现继承
+优点：父类实例属性得到继承，原型链查找效率提高，也能为一些属性提供合理的默认值
+缺点：父类实例属性为引用类型时，不恰当地修改会导致所有子类被修改
+缺点：创建父类实例作为子类原型时，可能无法确定构造函数需要的合理参数，这样提供的参数继承给子类没有实际意义，当子类需要这些参数时应该在构造函数中进行初始化和设置
+总结：继承应该是继承方法而不是属性，为子类设置父类实例属性应该是通过在子类构造函数中调用父类构造函数进行初始化
+方法 2：
+
+优点：正确设置原型链实现继承
+缺点：父类构造函数原型与子类相同。修改子类原型添加方法会修改父类
+方法 3：
+
+优点：正确设置原型链且避免方法 1.2 中的缺点
+缺点：ES5 方法需要注意兼容性
+改进：
+
+所有三种方法应该在子类构造函数中调用父类构造函数实现实例属性初始化
+function Rect() {
+    Shape.call(this);
+}
+用新创建的对象替代子类默认原型，设置Rect.prototype.constructor = Rect;保证一致性
+第三种方法的 polyfill：
+function create(obj) {
+    if (Object.create) {
+        return Object.create(obj);
+    }
+
+    function f() {};
+    f.prototype = obj;
+    return new f();
+}
