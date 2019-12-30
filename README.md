@@ -882,7 +882,232 @@
   ·像 <a href="../index.html">link</a> 中 href 属性，转换成 property 的时候需要通过转换得到完整 URL
   ·一些 attribute 和 property 不是一一对应，如：form 控件中 <input value="hello" /> 对应的是 defaultValue，修改或设置 value property 修改的是控件当前值，setAttribute 修改 value 属性不会改变 value property
   
-### offsetWidth/offsetHeight, clientWidth/clientHeight   
+### offsetWidth/offsetHeight, clientWidth/clientHeight 与 scrollWidth/scrollHeight 的区别
+
+  ·offsetWidth/offsetHeight 返回值包含 content + padding + border，效果与 e.getBoundingClientRect()相同
+  ·clientWidth/clientHeight 返回值只包含 content + padding，如果有滚动条，也不包含滚动条
+  ·scrollWidth/scrollHeight 返回值包含 content + padding + 溢出内容的尺寸
+  
+  [图](https://github.com/qiu-deqing/FE-interview/blob/master/img/element-size.png)
+  
+### XMLHttpRequest 通用属性和方法
+  1.readyState：表示请求状态的整数，取值：
+  ·UNSENT(0)：对象已创建
+  ·OPENED(1)：open()成功调用，在这个状态下，可以为 xhr 设置请求头，或者使用 send() 发送请求
+  ·HEADERS_RECEIVED(2):所有重定向已经自动完成访问, 并且最终响应的 HTTP 头已经收到
+  ·LOADING(3):响应体正在接收
+  ·DONE(4):数据传输完成或者传输产生错误
+  
+  2.onreadystatechange: readyState 改变时调用的函数
+  3.status:服务器返回的 HTTP 状态码(如: 200, 404)
+  4.statusText: 服务器返回的 HTTP 状态信息(如: OK, No Content)
+  5.responseText: 作为字符串形式的来自服务器的完整响应
+  6.responseXML: Document 对象,表示服务器的响应解析成的 XML 文档
+  7.abort():取消异步 HTTP 请求
+  8.getAllResponseHeaders(): 返回一个字符串, 包含响应中服务器发送的全部 HTTP 报头. 每个报头都是一个用冒号分隔开的名/值对, 并且使用一个回车/换行来分隔报头行
+  9.getResponseHeader(headerName):返回 headName对应的报头值
+  10.open(method, url, asynchronous, [user, password]): 初始化准备发送到服务器上的请求. method 是 HTTP 方法, 不区分大小写; url 是请求发送的相对或绝对 URL; asynchronous 表示请求是否异步; user 和 password 提供身份验证
+  11.setRequestHeader(name, value): 设置 HTTP 报头
+  12.send(body): 对服务器请求进行初始化. 参数 body 包含请求的主体部分, 对于 POST 请求为键值对字符串; 对于 GET 请求, 为 null
+  
+  
+### focus/blur 与 focusin/focusout 的区别与联系
+  1.focus/blur 不冒泡, focusin/focusout 冒泡
+  2. focus/blur 兼容性好, focusin/focusout 在除 FireFox 外的浏览器下都保持良好的兼容性,如需使用事件托管,可考虑在 FireFox 下使用事件捕获 ele.addEventListener(’focus‘, handler, true)
+  3.可获得焦点的元素:
+    ·window
+    ·链接被点击或键盘操作
+    ·表单控件被点击或键盘操作
+    ·设置 tabindex 属性的元素被点击或键盘操作
+
+### mouseover/mouseout 与 mouseenter/mouseleave 的区别与联系
+  
+  1.mouseover/mouseout 是标准事件, 所有浏览器都支持; mouseenter/mouseleave 是 IE5.5 引入的特有事件后来被 DOM3 标准采纳,现代标准浏览器也支持
+  2.mouseover/mouseout 是冒泡事件; mouseenter/mouseleave 不冒泡. 需要为多个元素监听鼠标移入/出事件时, 推荐mouseover/mouseout 托管, 提高性能
+  3.标准事件模型中 event.target 表示发生移入/出的元素, event.relatedTarget 对应移出/入元素;  在老 IE 中 event.srcElement 表示发生移入/出的元素, event.toElement 表示移出的目标元素, event.fromElement 表示移入时的来源元素
+  
+  例子: 鼠标从 div#target 元素移出时进行处理, 判断逻辑如下:
+  ```
+  <div id="target"><span>test</span></div>
+
+  <script type="text/javascript">
+  var target = document.getElementById('target');
+  if (target.addEventListener) {
+    target.addEventListener('mouseout', mouseoutHandler, false);
+  } else if (target.attachEvent) {
+    target.attachEvent('onmouseout', mouseoutHandler);
+  }
+
+  function mouseoutHandler(e) {
+    e = e || window.event;
+    var target = e.target || e.srcElement;
+
+    // 判断移出鼠标的元素是否为目标元素
+    if (target.id !== 'target') {
+      return;
+    }
+
+    // 判断鼠标是移出元素还是移到子元素
+    var relatedTarget = event.relatedTarget || e.toElement;
+    while (relatedTarget !== target
+      && relatedTarget.nodeName.toUpperCase() !== 'BODY') {
+      relatedTarget = relatedTarget.parentNode;
+    }
+
+    // 如果相等，说明鼠标在元素内部移动
+    if (relatedTarget === target) {
+      return;
+    }
+
+    // 执行需要操作
+    //alert('鼠标移出');
+
+  }
+  </script>
+  ```
+  
+### sessionStorage, localStorage, cookie 区别
+  1.都会在浏览器端保存, 有大小限制, 同源限制
+  2.cookie 会在请求时发送到服务器,作为会话标识, 服务器可修改 cookie; web storage 不会发送到服务器
+  3.cookie 有 path 概念, 子路径可以访问父路径, 父路径不能访问子路径 cookie
+  4.有效期: cookie 在设置的有效期内有效, 默认为浏览器关闭; sessionStorage 在窗口关闭前有效, localStorage 长期有效, 直到用户删除
+  5.共享: sessionStorage 不能共享, localStorage 在同源文档之间共享, cookie 在同源且符合 path 规则的文档之间共享
+  6.localStorage 的修改会触发其他文档窗口的 update 事件
+  7.cookie 有 secure 属性要求 HTTPS 传输
+  8.浏览器不能保存超过 300 个 cookie, 单个服务器不能超过 20 个, 每个 cookie 不能超过 4K. web storage 大小支持能达到 5M
+  
+### Javascript 跨域通信
+  同源：两个文档同源需满足
+    1.协议相同
+    2.域名相同
+    3.端口相同
+  跨域通信：js 进行 DOM 操作、通信时如果目标与当前窗口不满足同源条件，浏览器为了安全会阻止跨域操作。跨域通信通常有以下方法
+
+  ·如果是 log 之类的简单单项通信，新建<img>,<script>,<link>,<iframe>元素，通过 src，href 属性设置为目标 url。实现跨域请求
+  ·如果请求json 数据，使用<script>进行 jsonp 请求
+  ·现代浏览器中多窗口通信使用 HTML5 规范的 targetWindow.postMessage(data, origin);其中 data 是需要发送的对象，origin 是目标窗口的 origin。window.addEventListener('message', handler, false);handler 的 event.data 是 postMessage 发送来的数据，event.origin 是发送窗口的 origin，event.source 是发送消息的窗口引用
+  ·内部服务器代理请求跨域 url，然后返回数据
+  ·跨域请求数据，现代浏览器可使用 HTML5 规范的 CORS 功能，只要目标服务器返回 HTTP 头部**Access-Control-Allow-Origin: ***即可像普通 ajax 一样访问跨域资源
+  
+### Javascript 有哪几种数据类型
+  六种基本数据类型
+  · undefined
+  · null
+  · string
+  · boolean
+  · number
+  · symbol(ES6)
+  一种引用类型
+  · Object
+  
+### 什么是闭包, 闭包有什么用
+  闭包是在某个作用域内定义的函数, 它可以访问这个作用域的所有变量. 闭包作用域链通常包括三个部分:
+  1.函数本身作用域
+  2.闭包定义时的作用域
+  3.全局作用域
+  闭包常见用途:
+  1.创建特权方法用于访问控制
+  2.事件处理程序及回调
+  
+### javascript 有哪几种方法定义函数
+  1.函数声明表达式
+  2.function 操作符
+  3.Function 构造函数
+  4.ES6:arrow function  
+  
+### 应用程序存储和离线 web 应用
+HTML5 新增应用程序缓存，允许 web 应用将应用程序自身保存到用户浏览器中，用户离线状态也能访问。 1.为 html 元素设置 manifest 属性:<html manifest="myapp.appcache">，其中后缀名只是一个约定，真正识别方式是通过text/cache-manifest作为 MIME 类型。所以需要配置服务器保证设置正确 2.manifest 文件首行为CACHE MANIFEST，其余就是要缓存的 URL 列表，每个一行，相对路径都相对于 manifest 文件的 url。注释以#开头 3.url 分为三种类型：CACHE:为默认类型。NETWORK：表示资源从不缓存。 FALLBACK:每行包含两个 url，第二个 URL 是指需要加载和存储在缓存中的资源， 第一个 URL 是一个前缀。任何匹配该前缀的 URL 都不会缓存，如果从网络中载入这样的 URL 失败的话，就会用第二个 URL 指定的缓存资源来替代。以下是一个文件例子：
+  
+  ```
+  CACHE MANIFEST
+
+  CACHE:
+  myapp.html
+  myapp.css
+  myapp.js
+
+  FALLBACK:
+  videos/ offline_help.html
+
+  NETWORK:
+  cgi/
+  ```
+  
+### 客户端存储 localStorage 和 sessionStorage
+  ·localStorage 有效期为永久，sessionStorage 有效期为顶层窗口关闭前
+  ·同源文档可以读取并修改 localStorage 数据，sessionStorage 只允许同一个窗口下的文档访问，如通过 iframe 引入的同源文档。
+  ·Storage 对象通常被当做普通 javascript 对象使用：通过设置属性来存取字符串值，也可以通过setItem(key, value)设置，getItem(key)读取，removeItem(key)删除，clear()删除所有数据，length 表示已存储的数据项数目，key(index)返回对应索引的 key  
+  
+  ```
+  localStorage.setItem('x', 1); // storge x->1
+  localStorage.getItem('x); // return value of x
+
+  // 枚举所有存储的键值对
+  for (var i = 0, len = localStorage.length; i < len; ++i ) {
+      var name = localStorage.key(i);
+      var value = localStorage.getItem(name);
+  }
+
+  localStorage.removeItem('x'); // remove x
+  localStorage.clear();  // remove all data
+  ```
+  
+### cookie 及其操作
+  ·cookie 是 web 浏览器存储的少量数据，最早设计为服务器端使用，作为 HTTP 协议的扩展实现。cookie 数据会自动在浏览器和服务器之间传输。
+  ·通过读写 cookie 检测是否支持
+  ·cookie 属性有名，值，max-age，path, domain，secure；
+  ·cookie 默认有效期为浏览器会话，一旦用户关闭浏览器，数据就丢失，通过设置max-age=seconds属性告诉浏览器 cookie 有效期
+  ·cookie 作用域通过文档源和文档路径来确定，通过path和domain进行配置，web 页面同目录或子目录文档都可访问
+  ·通过 cookie 保存数据的方法为：为 document.cookie 设置一个符合目标的字符串如下
+  ·读取 document.cookie 获得'; '分隔的字符串，key=value,解析得到结果  
+  
+  ```
+  document.cookie = 'name=qiu; max-age=9999; path=/; domain=domain; secure';
+
+  document.cookie = 'name=aaa; path=/; domain=domain; secure';
+  // 要改变cookie的值，需要使用相同的名字、路径和域，新的值
+  // 来设置cookie，同样的方法可以用来改变有效期
+
+  // 设置max-age为0可以删除指定cookie
+
+  //读取cookie，访问document.cookie返回键值对组成的字符串，
+  //不同键值对之间用'; '分隔。通过解析获得需要的值
+  
+  ```
+  
+### javascript 有哪些方法定义对象
+  1.对象字面量： var obj = {};
+  2.构造函数： var obj = new Object();
+  3.Object.create(): var obj = Object.create(Object.prototype);  
+  
+  
+### ===运算符判断相等的流程是怎样的
+  1.如果两个值不是相同类型，它们不相等
+  2.如果两个值都是 null 或者都是 undefined，它们相等
+  3.如果两个值都是布尔类型 true 或者都是 false，它们相等
+  4.如果其中有一个是NaN，它们不相等
+  5.如果都是数值型并且数值相等，他们相等， -0 等于 0
+  6.如果他们都是字符串并且在相同位置包含相同的 16 位值，他它们相等；如果在长度或者内容上不等，它们不相等；两个字符串显示结果相同但是编码不同==和===都认为他们不相等
+  7.如果他们指向相同对象、数组、函数，它们相等；如果指向不同对象，他们不相等
+  
+### ==运算符判断相等的流程是怎样的
+  1.如果两个值类型相同，按照===比较方法进行比较
+  2.如果类型不同，使用如下规则进行比较
+  3.如果其中一个值是 null，另一个是 undefined，它们相等
+  4.如果一个值是数字另一个是字符串，将字符串转换为数字进行比较
+  5.如果有布尔类型，将true 转换为 1，false 转换为 0，然后用==规则继续比较
+  6.如果一个值是对象，另一个是数字或字符串，将对象转换为原始值然后用==规则继续比较
+  7.其他所有情况都认为不相等
+  
+### 对象到字符串的转换步骤
+  1.如果对象有 toString()方法，javascript 调用它。如果返回一个原始值（primitive value 如：string number boolean）,将这个值转换为字符串作为结果
+  2.如果对象没有 toString()方法或者返回值不是原始值，javascript 寻找对象的 valueOf()方法，如果存在就调用它，返回结果是原始值则转为字符串作为结果
+  3.否则，javascript 不能从 toString()或者 valueOf()获得一个原始值，此时 throws a TypeError
+
+### 对象到数字的转换步骤
+  1. 如果对象有valueOf()方法并且返回元素值，javascript将返回值转换为数字作为结果
+  2. 否则，如果对象有toString()并且返回原始值，javascript将返回结果转换为数字作为结果
+  3. 否则，throws a TypeError
   
   
   
